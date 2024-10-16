@@ -20,7 +20,7 @@ The API will convert this into a SPARQL query:
 SELECT ?person WHERE { ?person foaf:knows ?friend }
 ```
 
-For more information on the JSON query structure, refer to: [JSON_QUERY_STRUCTURE.md](JSON_QUERY_STRUCTURE.md)
+For more information on the JSON query structure, refer to: [JSON_QUERY_STRUCTURE.md](docs/JSON_QUERY_STRUCTURE.md)
 
 ### 2. **Middleware for Private API Access**
 ForestQB API acts as a middleware to **hide sensitive credentials** such as the username and password from the app. If your data source does not have a public API, or you wish to protect sensitive credentials, this API provides a secure way to authenticate and mirror requests.
@@ -50,7 +50,7 @@ The proxy ensures that all interactions with ForestBot are handled securely and 
     - The converted SPARQL query is sent to the appropriate private endpoint for data retrieval.
     - The API returns the SPARQL results back to the app.
     
-    For more information on the JSON query structure, refer to: [JSON_QUERY_STRUCTURE.md](JSON_QUERY_STRUCTURE.md)
+    For more information on the JSON query structure, refer to: [JSON_QUERY_STRUCTURE.md](docs/JSON_QUERY_STRUCTURE.md)
 
 2. **Private API Proxy**:
     - The app sends a query to the `/sparql` endpoint.
