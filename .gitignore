@@ -1,0 +1,34 @@
+# Composer dependencies
+/vendor
+/composer.lock
+
+# Environment files
+.env
+.env.local
+.env.*.local
+.env.testing
+
+# PHPStorm project files
+/.idea
+
+# PHPUnit result cache
+.phpunit.result.cache
+
+# Logs and temp files
+/storage/logs
+/storage/framework/cache
+/storage/framework/sessions
+/storage/framework/views
+
+# Laravel specific cache files
+/bootstrap/cache/*.php
+
+# Node modules (if using Node.js for frontend assets)
+node_modules/
+
+# OS-specific files
+.DS_Store
+Thumbs.db
+
+# IDE-specific files
+.vscode/
