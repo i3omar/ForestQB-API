@@ -10,7 +10,8 @@ use InvalidArgumentException;
  * @license GNU GPL v2+
  * @author Bene* < benestar.wikimedia@gmail.com >
  */
-class ExpressionValidator {
+class ExpressionValidator
+{
 
 	/**
 	 * Accept all expressions
@@ -58,25 +59,25 @@ class ExpressionValidator {
 	const VALIDATE_FUNCTION_AS = 128;
 
 	/**
-     * Accept complex expressions that mix native values and full IRIs
-     * For example: (5.4635725784415 117.9058464244 12.99 <http://qudt.org/vocab/unit#Kilometer>)
-     */
-    const VALIDATE_COMPLEX_EXPRESSION = 512;  // New constant for complex expressions
+	 * Accept complex expressions that mix native values and full IRIs
+	 * For example: (5.4635725784415 117.9058464244 12.99 <http://qudt.org/vocab/unit#Kilometer>)
+	 */
+	const VALIDATE_COMPLEX_EXPRESSION = 512;  // New constant for complex expressions
 
 	/**
-     * Accept POLYGON Well-Known Text (WKT) Literals.
-     */
-    const VALIDATE_POLYGON = 1024;  // New constant specifically for POLYGON literals
+	 * Accept POLYGON Well-Known Text (WKT) Literals.
+	 */
+	const VALIDATE_POLYGON = 1024;  // New constant specifically for POLYGON literals
 
 	/**
-     * Accept comparison expressions like ?Variable > "30"^^xsd:float.
-     */
-    const VALIDATE_COMPARISON = 2048;  // New constant for comparison expressions
+	 * Accept comparison expressions like ?Variable > "30"^^xsd:float.
+	 */
+	const VALIDATE_COMPARISON = 2048;  // New constant for comparison expressions
 
 	/**
-     * Accept nested comparison expressions like (?Variable1 > "value"^^type || ?Variable2 < "value"^^type).
-     */
-    const VALIDATE_NESTED_COMPARISON = 4096;
+	 * Accept nested comparison expressions like (?Variable1 > "value"^^type || ?Variable2 < "value"^^type).
+	 */
+	const VALIDATE_NESTED_COMPARISON = 4096;
 
 
 
@@ -85,7 +86,8 @@ class ExpressionValidator {
 	 */
 	private $regexHelper;
 
-	public function __construct() {
+	public function __construct()
+	{
 		$this->regexHelper = new RegexHelper();
 	}
 
@@ -97,19 +99,22 @@ class ExpressionValidator {
 	 * @param int $options
 	 * @throws InvalidArgumentException
 	 */
-	public function validate( $expression, $options ) {
-		if ( !is_string( $expression ) ) {
-			throw new InvalidArgumentException( '$expression has to be a string.' );
+	public function validate($expression, $options)
+	{
+		if (!is_string($expression)) {
+			throw new InvalidArgumentException('$expression has to be a string.');
 		}
 
-		if ( !$this->matches( $expression, $options ) ) {
-			throw new InvalidArgumentException( '$expression has to be a ' .
-				implode( ' or a ', $this->getOptionNames( $options ) ) . ', got ' . $expression
+		if (!$this->matches($expression, $options)) {
+			throw new InvalidArgumentException(
+				'$expression has to be a ' .
+					implode(' or a ', $this->getOptionNames($options)) . ', got ' . $expression
 			);
 		}
 	}
 
-	private function getOptionNames( $options ) {
+	private function getOptionNames($options)
+	{
 		$names = array(
 			'variable' => self::VALIDATE_VARIABLE,
 			'IRI' => self::VALIDATE_IRI,
@@ -122,31 +127,32 @@ class ExpressionValidator {
 			'complex expression' => self::VALIDATE_COMPLEX_EXPRESSION,  // Added name for complex expression validation
 			'POLYGON literal' => self::VALIDATE_POLYGON,  // Changed to POLYGON literal validation
 			'comparison expression' => self::VALIDATE_COMPARISON,  // Added name for comparison expression validation
-            'nested comparison' => self::VALIDATE_NESTED_COMPARISON,  // Added name for nested comparison validation
+			'nested comparison' => self::VALIDATE_NESTED_COMPARISON,  // Added name for nested comparison validation
 
 
 		);
 
-		$names = array_filter( $names, function( $key ) use ( $options ) {
+		$names = array_filter($names, function ($key) use ($options) {
 			return $options & $key;
-		} );
+		});
 
-		return array_keys( $names );
+		return array_keys($names);
 	}
 
-	private function matches( $expression, $options ) {
-		return $this->isVariable( $expression, $options ) ||
-			$this->isIRI( $expression, $options ) ||
-			$this->isPrefix( $expression, $options ) ||
-			$this->isPrefixedIri( $expression, $options ) ||
-			$this->isValue( $expression, $options ) ||
-			$this->isPath( $expression, $options ) ||
-			$this->isFunction( $expression, $options ) ||
-			$this->isFunctionAs( $expression, $options ) ||
-			$this->isComplexExpression( $expression, $options ) ||  // New check for nearby etc (i3omar) - Added check for complex expressions
-			$this->isPolygon( $expression, $options ) ||  // to check for POLYGON literals
-			$this->isComparison( $expression, $options ) ||  // Added check for comparison expressions
-			$this->isNestedComparison( $expression, $options );  // Added check for nested comparisons
+	private function matches($expression, $options)
+	{
+		return $this->isVariable($expression, $options) ||
+			$this->isIRI($expression, $options) ||
+			$this->isPrefix($expression, $options) ||
+			$this->isPrefixedIri($expression, $options) ||
+			$this->isValue($expression, $options) ||
+			$this->isPath($expression, $options) ||
+			$this->isFunction($expression, $options) ||
+			$this->isFunctionAs($expression, $options) ||
+			$this->isComplexExpression($expression, $options) ||  // New check for nearby etc (i3omar) - Added check for complex expressions
+			$this->isPolygon($expression, $options) ||  // to check for POLYGON literals
+			$this->isComparison($expression, $options) ||  // Added check for comparison expressions
+			$this->isNestedComparison($expression, $options);  // Added check for nested comparisons
 
 
 
@@ -154,114 +160,148 @@ class ExpressionValidator {
 	}
 
 	/**
- * Validates nested comparison expressions like:
- * (?Variable1 > "30"^^xsd:float || ?Variable2 < "100"^^xsd:integer || ?Variable3 = "50"^^xsd:integer).
- *
- * @param string $expression The expression to validate
- * @param int $options The validation options
- * @return bool True if the expression matches the nested comparison pattern
- */
-private function isNestedComparison( $expression, $options ) {
-    return $options & self::VALIDATE_NESTED_COMPARISON &&
-           $this->regexHelper->matchesRegex(
-               '^\s*\(\s*(\\?[A-Za-z_][A-Za-z0-9_]*\s*(=|<|>|<=|>=)\s*".+?"\^\^xsd:[a-zA-Z]+)(\s*(\|\||&&)\s*\\?[A-Za-z_][A-Za-z0-9_]*\s*(=|<|>|<=|>=)\s*".+?"\^\^xsd:[a-zA-Z]+)*\s*\)\s*$',
-               $expression
-           );
-}
-
-	/**
-     * Validates comparison expressions like ?Variable > "30"^^xsd:float.
-     *
-     * @param string $expression The expression to validate
-     * @param int $options The validation options
-     * @return bool True if the expression matches the comparison pattern
-     */
-    private function isComparison( $expression, $options ) {
-        // Check if the VALIDATE_COMPARISON option is set and if the expression matches the comparison pattern
-        return $options & self::VALIDATE_COMPARISON &&
-               $this->regexHelper->matchesRegex(
-				'^\s*\?[A-Za-z_][A-Za-z0-9_]*\s*(=|<|>|<=|>=)\s*"\d+(\.\d+)?"\s*\^\^xsd:[a-zA-Z]+\s*$', 
+	 * Validates nested comparison expressions like:
+	 * (?Variable1 > "30"^^xsd:float || ?Variable2 < "100"^^xsd:integer || ?Variable3 = "50"^^xsd:integer).
+	 *
+	 * @param string $expression The expression to validate
+	 * @param int $options The validation options
+	 * @return bool True if the expression matches the nested comparison pattern
+	 */
+	private function isNestedComparison($expression, $options)
+	{
+		return $options & self::VALIDATE_NESTED_COMPARISON &&
+			$this->regexHelper->matchesRegex(
+				'^\s*\(\s*(\\?[A-Za-z_][A-Za-z0-9_]*\s*(=|<|>|<=|>=)\s*".+?"\^\^xsd:[a-zA-Z]+)(\s*(\|\||&&)\s*\\?[A-Za-z_][A-Za-z0-9_]*\s*(=|<|>|<=|>=)\s*".+?"\^\^xsd:[a-zA-Z]+)*\s*\)\s*$',
 				$expression
-               );
-    }
+			);
+	}
 
 	/**
-     * Validates POLYGON Well-Known Text (WKT) literals.
-     * Example: "POLYGON((117.46719360352 5.5689609255762, ...))"^^geo:wktLiteral
-     *
-     * @param string $expression The expression to validate
-     * @param int $options The validation options
-     * @return bool True if the expression matches the POLYGON pattern
-     */
-    private function isPolygon( $expression, $options ) {
-        // Check if the VALIDATE_POLYGON option is set and if the expression matches the POLYGON pattern
-        return $options & self::VALIDATE_POLYGON &&
-               $this->regexHelper->matchesRegex(
-                   '"POLYGON\(\(([\d\.]+\s+[\d\.]+,?\s*)+\)\)"\^\^geo:wktLiteral', 
-                   $expression
-               );
-    }
+	 * Validates comparison expressions like ?Variable > "30"^^xsd:float.
+	 * 
+	 * This function checks whether an expression matches the pattern for comparison expressions, 
+	 * such as `?Variable < "value"^^xsd:dataType`. Comparison expressions involve variables 
+	 * compared to a literal value of a specific data type, with operators like `=`, `<`, `>`, `<=`, or `>=`.
+	 * 
+	 * Examples of valid expressions include:
+	 * - `?Temperature > "30.5"^^xsd:float`
+	 * - `?Age <= "18"^^xsd:integer`
+	 * - `?EventDate < "2023-01-01T00:00:00"^^xsd:dateTime`
+	 * 
+	 * This function supports a variety of `xsd` data types, such as `float`, `integer`, and `dateTime`.
+	 * 
+	 * @param string $expression The expression to validate. This should be a string containing a variable, 
+	 *        a comparison operator, and a literal with an `xsd` data type.
+	 * @param int $options The validation options passed in. This should include VALIDATE_COMPARISON.
+	 * @return bool True if the expression matches the comparison pattern; otherwise, false.
+	 */
+	private function isComparison($expression, $options)
+	{
+		// Check if the VALIDATE_COMPARISON option is set. This ensures that the function is only
+		// invoked when comparisons are allowed as part of the validation options.
+		if (!($options & self::VALIDATE_COMPARISON)) {
+			return false;
+		}
+
+		// Define a regex pattern to match comparison expressions.
+		// - The pattern begins with a variable in the form `?VariableName`.
+		// - Next, it includes a comparison operator (`=`, `<`, `>`, `<=`, or `>=`).
+		// - It follows with a literal value enclosed in double quotes. This may include decimal values.
+		// - The literal is followed by `^^xsd:` and the data type.
+		// - The pattern allows various `xsd` types such as `float`, `integer`, `dateTime`, and other valid types.
+		return $this->regexHelper->matchesRegex(
+			'^\s*\?[A-Za-z_][A-Za-z0-9_]*\s*(=|<|>|<=|>=)\s*".+?"\s*\^\^xsd:(float|integer|dateTime|[a-zA-Z]+)\s*$',
+			$expression
+		);
+	}
 
 	/**
-     * Validates complex expressions with multiple native values followed by a full IRI.
-     * Example: (number number number <IRI>)
-     *
-     * @param string $expression The expression to validate
-     * @param int $options The validation options
-     * @return bool True if the expression matches the complex pattern
-     */
-	private function isComplexExpression( $expression, $options ) {
+	 * Validates POLYGON Well-Known Text (WKT) literals.
+	 * Example: "POLYGON((117.46719360352 5.5689609255762, ...))"^^geo:wktLiteral
+	 *
+	 * @param string $expression The expression to validate
+	 * @param int $options The validation options
+	 * @return bool True if the expression matches the POLYGON pattern
+	 */
+	private function isPolygon($expression, $options)
+	{
+		// Check if the VALIDATE_POLYGON option is set and if the expression matches the POLYGON pattern
+		return $options & self::VALIDATE_POLYGON &&
+			$this->regexHelper->matchesRegex(
+				'"POLYGON\(\(([\d\.]+\s+[\d\.]+,?\s*)+\)\)"\^\^geo:wktLiteral',
+				$expression
+			);
+	}
+
+	/**
+	 * Validates complex expressions with multiple native values followed by a full IRI.
+	 * Example: (number number number <IRI>)
+	 *
+	 * @param string $expression The expression to validate
+	 * @param int $options The validation options
+	 * @return bool True if the expression matches the complex pattern
+	 */
+	private function isComplexExpression($expression, $options)
+	{
 		// Check for a pattern like (value value value <IRI>)
 		return $options & self::VALIDATE_NATIVE &&
-			   $this->regexHelper->matchesRegex( '\(\s*\d+(\.\d+)?\s+\d+(\.\d+)?\s+\d+(\.\d+)?\s+<[^>]+>\s*\)', $expression );
+			$this->regexHelper->matchesRegex('\(\s*\d+(\.\d+)?\s+\d+(\.\d+)?\s+\d+(\.\d+)?\s+<[^>]+>\s*\)', $expression);
 	}
 
-	
-	private function isVariable( $expression, $options ) {
+
+	private function isVariable($expression, $options)
+	{
 		return $options & self::VALIDATE_VARIABLE &&
-			$this->regexHelper->matchesRegex( '\{variable}', $expression );
+			$this->regexHelper->matchesRegex('\{variable}', $expression);
 	}
 
-	private function isIRI( $expression, $options ) {
+	private function isIRI($expression, $options)
+	{
 		return $options & self::VALIDATE_IRI &&
-			$this->regexHelper->matchesRegex( '\{iri}', $expression );
+			$this->regexHelper->matchesRegex('\{iri}', $expression);
 	}
 
-	private function isPrefix( $expression, $options ) {
+	private function isPrefix($expression, $options)
+	{
 		return $options & self::VALIDATE_PREFIX &&
-			$this->regexHelper->matchesRegex( '\{prefix}', $expression );
+			$this->regexHelper->matchesRegex('\{prefix}', $expression);
 	}
 
-	private function isPrefixedIri( $expression, $options ) {
+	private function isPrefixedIri($expression, $options)
+	{
 		return $options & self::VALIDATE_PREFIXED_IRI &&
-			$this->regexHelper->matchesRegex( '\{prefixed_iri}', $expression );
+			$this->regexHelper->matchesRegex('\{prefixed_iri}', $expression);
 	}
 
-	private function isValue( $expression, $options ) {
+	private function isValue($expression, $options)
+	{
 		return $options & self::VALIDATE_NATIVE &&
-			$this->regexHelper->matchesRegex( '\{native}', $expression );
+			$this->regexHelper->matchesRegex('\{native}', $expression);
 	}
 
-	private function isPath( $expression, $options ) {
+	private function isPath($expression, $options)
+	{
 		return $options & self::VALIDATE_PATH &&
-			$this->regexHelper->matchesRegex( '\{path}', $expression );
+			$this->regexHelper->matchesRegex('\{path}', $expression);
 	}
 
-	private function isFunction( $expression, $options ) {
+	private function isFunction($expression, $options)
+	{
 		// @todo this might not be complete
 		return $options & self::VALIDATE_FUNCTION &&
-			$this->regexHelper->matchesRegex( '\{function}', $expression ) &&
-			$this->checkBrackets( $expression );
+			$this->regexHelper->matchesRegex('\{function}', $expression) &&
+			$this->checkBrackets($expression);
 	}
 
-	private function checkBrackets( $expression ) {
-		$expression = $this->regexHelper->escapeSequences( $expression );
-		return substr_count( $expression, '(' ) === substr_count( $expression, ')' );
+	private function checkBrackets($expression)
+	{
+		$expression = $this->regexHelper->escapeSequences($expression);
+		return substr_count($expression, '(') === substr_count($expression, ')');
 	}
 
-	private function isFunctionAs( $expression, $options ) {
+	private function isFunctionAs($expression, $options)
+	{
 		return $options & self::VALIDATE_FUNCTION_AS &&
-			$this->regexHelper->matchesRegex( '\(\{function} AS \{variable}\)', $expression );
+			$this->regexHelper->matchesRegex('\(\{function} AS \{variable}\)', $expression);
 	}
-
 }
