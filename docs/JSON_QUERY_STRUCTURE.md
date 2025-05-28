@@ -157,67 +157,64 @@ The JSON input is expected to contain the following key fields, which the functi
    ```
 
 4. **`Aggregate & Temporal Functions`** (optional):
-  - To add aggregate or temporal functions in your JSON for ForestQB, simply include a filter for the relevant variable and set the `selectedFilter.text` property. For **aggregate functions** (like AVG, COUNT, SUM, etc.), set `selectedFilter.text` to any string containing the word `"function"` (for example, `"function (Aggregate)"`), and specify the desired function (e.g., `"AVG"`, `"COUNT"`) in `input.value`. For **temporal functions** (like YEAR, MONTH, DATE, etc.), the `selectedFilter.text` must contain both the word `"function"` **and** either `"temporal"` or `"date"` (for example, `"function (Temporal)"` or `"date function"`), and set the temporal function name (like `"YEAR"` or `"MONTH"`) in `input.value`. Make sure to use the correct variable name with `predicateName` (starting with `?`) and set `isSelectable: true` to include the result in your output. This will instruct ForestQB to build and include the proper SPARQL functions in your query results.
-
-
-    ```JSON 
-    {
-      "observablesKeys": ["?obs"],
-      "observables": [
+    - To add aggregate or temporal functions in your JSON for ForestQB, simply include a filter for the relevant variable and set the `selectedFilter.text` property. For **aggregate functions** (like AVG, COUNT, SUM, etc.), set `selectedFilter.text` to any string containing the word `"function"` (for example, `"function (Aggregate)"`), and specify the desired function (e.g., `"AVG"`, `"COUNT"`) in `input.value`. For **temporal functions** (like YEAR, MONTH, DATE, etc.), the `selectedFilter.text` must contain both the word `"function"` **and** either `"temporal"` or `"date"` (for example, `"function (Temporal)"` or `"date function"`), and set the temporal function name (like `"YEAR"` or `"MONTH"`) in `input.value`. Make sure to use the correct variable name with `predicateName` (starting with `?`) and set `isSelectable: true` to include the result in your output. This will instruct ForestQB to build and include the proper SPARQL functions in your query results.
+        ```JSON 
         {
-          "subject": "?obs",
-          "predicate": "http://www.w3.org/ns/sosa/hasResultTime",
-          "object": "?timestamp"
+        "observablesKeys": ["?obs"],
+        "observables": [
+            {
+            "subject": "?obs",
+            "predicate": "http://www.w3.org/ns/sosa/hasResultTime",
+            "object": "?timestamp"
+            }
+        ],
+        "filters": {
+            "?obs": {
+            "http://www.w3.org/ns/sosa/hasResultTime": {
+                "uri": "http://www.w3.org/ns/sosa/hasResultTime",
+                "predicateName": "?timestamp",
+                "isSelectable": true,
+                "filters": [
+                {
+                    "selectedFilter": { "text": "function (Temporal)" },
+                    "input": { "value": "YEAR" }
+                }
+                ]
+            },
+            "http://example.org/temperature": {
+                "uri": "http://example.org/temperature",
+                "predicateName": "?temperature",
+                "isSelectable": true,
+                "filters": [
+                {
+                    "selectedFilter": { "text": "function (Aggregate)" },
+                    "input": { "value": "AVG" }
+                }
+                ]
+            }
+            }
+        },
+        "limit": 100
         }
-      ],
-      "filters": {
-        "?obs": {
-          "http://www.w3.org/ns/sosa/hasResultTime": {
-            "uri": "http://www.w3.org/ns/sosa/hasResultTime",
-            "predicateName": "?timestamp",
-            "isSelectable": true,
-            "filters": [
-              {
-                "selectedFilter": { "text": "function (Temporal)" },
-                "input": { "value": "YEAR" }
-              }
-            ]
-          },
-          "http://example.org/temperature": {
-            "uri": "http://example.org/temperature",
-            "predicateName": "?temperature",
-            "isSelectable": true,
-            "filters": [
-              {
-                "selectedFilter": { "text": "function (Aggregate)" },
-                "input": { "value": "AVG" }
-              }
-            ]
-          }
-        }
-      },
-      "limit": 100
-    }
-    ```
+        ```
 
-  **Supports Functions**:
-
-      | Function Type | JSON value (`input.value`) | Description                   |
-      | ------------- | -------------------------- | ----------------------------- |
-      | Aggregate     | `AVG`                      | Mean of values                |
-      | Aggregate     | `MAX`                      | Maximum value                 |
-      | Aggregate     | `MIN`                      | Minimum value                 |
-      | Aggregate     | `SUM`                      | Sum of values                 |
-      | Aggregate     | `COUNT`                    | Count of values               |
-      | Aggregate     | `SAMPLE`                   | Random sample value           |
-      | Aggregate     | `GROUP_CONCAT`             | Concatenated string of values |
-      | Temporal      | `DATE`                     | Date part of datetime         |
-      | Temporal      | `YEAR`                     | Year                          |
-      | Temporal      | `MONTH`                    | Month                         |
-      | Temporal      | `DAY`                      | Day                           |
-      | Temporal      | `HOURS`                    | Hour                          |
-      | Temporal      | `MINUTES`                  | Minutes                       |
-      | Temporal      | `SECONDS`                  | Seconds                       |
+    - **Supports Functions**:
+    | Function Type | JSON value (`input.value`) | Description                   |
+    | ------------- | -------------------------- | ----------------------------- |
+    | Aggregate     | `AVG`                      | Mean of values                |
+    | Aggregate     | `MAX`                      | Maximum value                 |
+    | Aggregate     | `MIN`                      | Minimum value                 |
+    | Aggregate     | `SUM`                      | Sum of values                 |
+    | Aggregate     | `COUNT`                    | Count of values               |
+    | Aggregate     | `SAMPLE`                   | Random sample value           |
+    | Aggregate     | `GROUP_CONCAT`             | Concatenated string of values |
+    | Temporal      | `DATE`                     | Date part of datetime         |
+    | Temporal      | `YEAR`                     | Year                          |
+    | Temporal      | `MONTH`                    | Month                         |
+    | Temporal      | `DAY`                      | Day                           |
+    | Temporal      | `HOURS`                    | Hour                          |
+    | Temporal      | `MINUTES`                  | Minutes                       |
+    | Temporal      | `SECONDS`                  | Seconds                       |
 
 ### Additional Considerations:
 
