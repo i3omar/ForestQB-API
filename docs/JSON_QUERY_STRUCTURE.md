@@ -199,22 +199,22 @@ The JSON input is expected to contain the following key fields, which the functi
         ```
 
     - **Supports Functions**:
-    | Function Type | JSON value (`input.value`) | Description                   |
-    | ------------- | -------------------------- | ----------------------------- |
-    | Aggregate     | `AVG`                      | Mean of values                |
-    | Aggregate     | `MAX`                      | Maximum value                 |
-    | Aggregate     | `MIN`                      | Minimum value                 |
-    | Aggregate     | `SUM`                      | Sum of values                 |
-    | Aggregate     | `COUNT`                    | Count of values               |
-    | Aggregate     | `SAMPLE`                   | Random sample value           |
-    | Aggregate     | `GROUP_CONCAT`             | Concatenated string of values |
-    | Temporal      | `DATE`                     | Date part of datetime         |
-    | Temporal      | `YEAR`                     | Year                          |
-    | Temporal      | `MONTH`                    | Month                         |
-    | Temporal      | `DAY`                      | Day                           |
-    | Temporal      | `HOURS`                    | Hour                          |
-    | Temporal      | `MINUTES`                  | Minutes                       |
-    | Temporal      | `SECONDS`                  | Seconds                       |
+      | Function Type | JSON value (`input.value`) | Description                   |
+      | ------------- | -------------------------- | ----------------------------- |
+      | Aggregate     | `AVG`                      | Mean of values                |
+      | Aggregate     | `MAX`                      | Maximum value                 |
+      | Aggregate     | `MIN`                      | Minimum value                 |
+      | Aggregate     | `SUM`                      | Sum of values                 |
+      | Aggregate     | `COUNT`                    | Count of values               |
+      | Aggregate     | `SAMPLE`                   | Random sample value           |
+      | Aggregate     | `GROUP_CONCAT`             | Concatenated string of values |
+      | Temporal      | `DATE`                     | Date part of datetime         |
+      | Temporal      | `YEAR`                     | Year                          |
+      | Temporal      | `MONTH`                    | Month                         |
+      | Temporal      | `DAY`                      | Day                           |
+      | Temporal      | `HOURS`                    | Hour                          |
+      | Temporal      | `MINUTES`                  | Minutes                       |
+      | Temporal      | `SECONDS`                  | Seconds                       |
 
 ### Additional Considerations:
 
