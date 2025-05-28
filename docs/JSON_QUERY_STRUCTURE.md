@@ -156,8 +156,9 @@ The JSON input is expected to contain the following key fields, which the functi
    }
    ```
 
-3.1 **Aggregate & Temporal Functions** (optional):
-To add aggregate or temporal functions in your JSON for ForestQB, simply include a filter for the relevant variable and set the `selectedFilter.text` property. For **aggregate functions** (like AVG, COUNT, SUM, etc.), set `selectedFilter.text` to any string containing the word `"function"` (for example, `"function (Aggregate)"`), and specify the desired function (e.g., `"AVG"`, `"COUNT"`) in `input.value`. For **temporal functions** (like YEAR, MONTH, DATE, etc.), the `selectedFilter.text` must contain both the word `"function"` **and** either `"temporal"` or `"date"` (for example, `"function (Temporal)"` or `"date function"`), and set the temporal function name (like `"YEAR"` or `"MONTH"`) in `input.value`. Make sure to use the correct variable name with `predicateName` (starting with `?`) and set `isSelectable: true` to include the result in your output. This will instruct ForestQB to build and include the proper SPARQL functions in your query results.
+    1. **Aggregate & Temporal Functions** (optional):
+
+        To add aggregate or temporal functions in your JSON for ForestQB, simply include a filter for the relevant variable and set the `selectedFilter.text` property. For **aggregate functions** (like AVG, COUNT, SUM, etc.), set `selectedFilter.text` to any string containing the word `"function"` (for example, `"function (Aggregate)"`), and specify the desired function (e.g., `"AVG"`, `"COUNT"`) in `input.value`. For **temporal functions** (like YEAR, MONTH, DATE, etc.), the `selectedFilter.text` must contain both the word `"function"` **and** either `"temporal"` or `"date"` (for example, `"function (Temporal)"` or `"date function"`), and set the temporal function name (like `"YEAR"` or `"MONTH"`) in `input.value`. Make sure to use the correct variable name with `predicateName` (starting with `?`) and set `isSelectable: true` to include the result in your output. This will instruct ForestQB to build and include the proper SPARQL functions in your query results.
 
 
 ```JSON 
