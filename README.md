@@ -120,9 +120,32 @@ The proxy ensures that all interactions with ForestBot are handled securely and 
    ```
 
 3. Run the API using the built-in PHP server:
-   ```bash
-   php -S localhost:8081 -t public
-   ```
+
+    When you run the API using the built-in PHP server, you specify a port where the server will listen for incoming requests. In the following example, the port is set to `8081`:
+    
+    ```bash
+    php -S localhost:8081 -t public
+    ```
+    
+    The `localhost:8081` part defines the server's address and port:
+    
+    * `localhost`: This specifies that the server will only be accessible from your local machine.
+    * `8081`: This is the port number the server listens to for incoming requests.
+    
+    #### Changing the Port:
+    
+    If you wish to change the port number (for example, to avoid conflicts with other services or to meet a specific requirement), you can modify the port number in the command. For instance:
+    
+    ```bash
+    php -S localhost:8082 -t public
+    ```
+    
+    This would start the server on port `8082` instead of `8081`.
+    
+    #### Important: Synchronize with ForestQB Tool Settings
+    
+    If you change the port number, **ensure that the ForestQB app or any other tools you're using to interact with the API are configured to match the new port**. Otherwise, communication will fail as the tool won't be able to reach the server.
+
 
 4. Finally, you need to run [ForestQB](https://github.com/i3omar/ForestQB) app.
 
