@@ -146,8 +146,24 @@ The proxy ensures that all interactions with ForestBot are handled securely and 
     
     If you change the port number, **ensure that the ForestQB app or any other tools you're using to interact with the API are configured to match the new port**. Otherwise, communication will fail as the tool won't be able to reach the server.
 
+4. For the [ForestBot](https://github.com/i3omar/ForestBot) Agent:
 
-4. Finally, you need to run [ForestQB](https://github.com/i3omar/ForestQB) app.
+   We use the `ForestBotProxyController.php` file as a proxy for the RASA chat agent.
+   By default, the RASA webhook endpoint is:
+    ```bash
+    http://localhost:5005/webhooks/rest/webhook
+    ```
+    In the code, this is set as:
+    ```php
+    // Base URI of the remote API
+    $baseUri = 'http://localhost:5005';
+    $endpoint = '/webhooks/rest/webhook';
+    ```
+    If you change the RASA server's port or URL, make sure to update the values of `$baseUri` and `$endpoint` accordingly to reflect the correct port and URL.
+
+
+   
+6. Finally, you need to run [ForestQB](https://github.com/i3omar/ForestQB) app.
 
 ## License
 
