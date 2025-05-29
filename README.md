@@ -105,7 +105,7 @@ The proxy ensures that all interactions with ForestBot are handled securely and 
 
 1. Clone the repository and install dependencies:
    ```bash
-   git clone https://github.com/YourGitHubUsername/ForestQB-API.git
+   git clone https://github.com/i3omar/ForestQB-API.git
    cd ForestQB-API
    composer install
    ```
