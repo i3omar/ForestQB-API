@@ -266,28 +266,32 @@ class QueryBuilderController
                         // Aggregate functions summarize or combine multiple values into a single result. They are commonly used for statistics like average, sum, count, min, and max.
                         // Handle functions like Temporal or Aggregate
 
-                        // temporal if has temporal or date keywords.
-                        if (stripos($filterValue["selectedFilter"]["text"], "temporal") !== false || stripos($filterValue["selectedFilter"]["text"], "date") !== false) {
-                            $functionsData['TemporalFunctions'][$observable[$observablesKeysIndex]][] = [
-                                'functionType' => $filterValue["input"]["value"],
-                                'variable_name' => $value2['predicateName'],
-                                'variable_uri' => $value2['uri'],
-                                'subject' => $observable['subject'],
-                                'predicate' => $observable['predicate'],
-                                'object' => $observable['object'],
-                                'fieldsetUri' => $observable[$observablesKeysIndex]
-                            ];
-                        } else { //else it is Aggregate Function
-                            $functionsData['AggregateFunctions'][$observable[$observablesKeysIndex]][] = [
-                                'functionType' => $filterValue["input"]["value"],
-                                'variable_name' => $value2['predicateName'],
-                                'variable_uri' => $value2['uri'],
-                                'subject' => $observable['subject'],
-                                'predicate' => $observable['predicate'],
-                                'object' => $observable['object'],
-                                'fieldsetUri' => $observable[$observablesKeysIndex]
+                        // Check if 'input' value is set, not null, not empty, and not only whitespace
+                        if (isset($filterValue["input"]["value"]) && trim($filterValue["input"]["value"]) !== '') {
+                            // Store the value in a variable for clarity
+                            $functionType = $filterValue["input"]["value"];
+
+                            // Determine if the selected filter is temporal or date related
+                            $targetKey = (
+                                stripos($filterValue["selectedFilter"]["text"], "temporal") !== false
+                                || stripos($filterValue["selectedFilter"]["text"], "date") !== false
+                            )
+                                ? 'TemporalFunctions'    // Use 'TemporalFunctions' if temporal/date is found
+                                : 'AggregateFunctions';  // Otherwise, use 'AggregateFunctions'
+
+                            // Build and add the function data to the appropriate category
+                            $functionsData[$targetKey][$observable[$observablesKeysIndex]][] = [
+                                'functionType'   => $functionType,                  // The function type input by the user
+                                'variable_name'  => $value2['predicateName'],       // The variable's name
+                                'variable_uri'   => $value2['uri'],                 // The variable's URI
+                                'subject'        => $observable['subject'],         // The subject part of the observable
+                                'predicate'      => $observable['predicate'],       // The predicate part of the observable
+                                'object'         => $observable['object'],          // The object part of the observable
+                                'fieldsetUri'    => $observable[$observablesKeysIndex] // The fieldset URI (key)
                             ];
                         }
+                        // If the input value is null, empty, or only whitespace, this block is skipped.
+
                     } else {
                         $preparedFilter = $this->prepareFilter($filterValue, $value2['predicateName'], $dt);
 
