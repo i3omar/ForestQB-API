@@ -18,13 +18,13 @@ class ForestBotProxyController
     {        
         // Base URI of the remote API
         $baseUri = 'http://localhost:5005';
-        $endpoint = '/webhooks/rest/webhook';
+        $urlSuffix = '/webhooks/rest/webhook';
 
         // Prepare the data from the POST request
         $postData = file_get_contents('php://input');
 
         // Perform the POST request using cURL
-        $response = $this->makePostRequest($baseUri . $endpoint, $postData);
+        $response = $this->makePostRequest($baseUri . $urlSuffix, $postData);
 
         /// Output the response
         header('Content-Type: application/json');

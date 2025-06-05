@@ -88,7 +88,22 @@ if ($requestMethod === 'POST' && $requestUri === '/sparql') {
     require_once __DIR__ . '/../ForestBotProxyController.php';
     $controller = new ForestBotProxyController();
     $controller->index();
-} else {
+} elseif ($requestMethod === 'POST' && $requestUri === '/forestBot/llm/proxy') {
+    // Route to LlmProxyController
+    require_once __DIR__ . '/../LlmProxyController.php';
+    $controller = new LlmProxyController();
+    $controller->index();
+} elseif ($requestMethod === 'POST' && $requestUri === '/forestBot/llm/collection/build') {
+    // Route to LlmProxyController
+    require_once __DIR__ . '/../LlmProxyController.php';
+    $controller = new LlmProxyController();
+    $controller->createCollection();
+} elseif ($requestMethod === 'POST' && $requestUri === '/forestBot/llm/collection/search') {
+    // Route to LlmProxyController
+    require_once __DIR__ . '/../LlmProxyController.php';
+    $controller = new LlmProxyController();
+    $controller->searchRequest();
+}else {
     // Return 404 error if the route is not found
     http_response_code(404);
     echo json_encode(['error' => 'Not Found']);

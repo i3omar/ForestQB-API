@@ -117,6 +117,12 @@ The proxy ensures that all interactions with ForestBot are handled securely and 
    DATABASE_URL_SUFFIX=/query
    DATABASE_USERNAME=my_username
    DATABASE_PASSWORD=my_password
+
+   LLM_API_BASE_URI=https://api.openai.com
+   LLM_API_KEY=my_api_key
+   LLM_API_URL_SUFFIX=/v1/chat/completions
+Q  DRANT_URL=http://localhost:6333
+
    ```
 
 3. Run the API using the built-in PHP server:
