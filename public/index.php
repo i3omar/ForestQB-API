@@ -88,7 +88,7 @@ if ($requestMethod === 'POST' && $requestUri === '/sparql') {
     require_once __DIR__ . '/../ForestBotProxyController.php';
     $controller = new ForestBotProxyController();
     $controller->index();
-} elseif ($requestMethod === 'POST' && $requestUri === '/forestBot/llm/proxy') {
+} elseif ($requestMethod === 'POST' && $requestUri === '/forestBot/llm/collection/build') {
     // Route to LlmProxyController
     require_once __DIR__ . '/../LlmProxyController.php';
     $controller = new LlmProxyController();

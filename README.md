@@ -42,6 +42,40 @@ The API also serves as a **proxy** for communication with **ForestBot**, our int
 
 The proxy ensures that all interactions with ForestBot are handled securely and effectively, allowing the ForestQB app to leverage the chatbot's functionalities, such as answering questions, retrieving data, or interacting with users.
 
+### 4. **LLM Proxy** and **Vector Database (Qdrant)** Integration
+ForestQB-API supports integration with external LLMs (such as OpenAI GPT) and semantic vector search using Qdrant:
+   - **LLM Proxy**: Securely forwards prompts to an LLM and returns completions, using API keys and endpoints in `.env`.
+   - **Vector Search**: Builds and searches collections of vectorized RDF triples for advanced retrieval-augmented workflows.
+
+#### LLM Example:
+```
+POST /forestBot/llm/proxy
+{
+  "model": "gpt-3.5-turbo",
+  "messages": [
+    {"role": "user", "content": "Summarize this triple..."}
+  ]
+}
+```
+#### Qdrant Build Example:
+```
+POST /forestBot/llm/collection/build
+{
+  "rdfTriples": [
+    "Alice foaf:knows Bob .",
+    "Bob foaf:knows Charlie ."
+  ],
+  "collectionName": "rdf_ontology"
+}
+```
+#### Qdrant Search Example:
+```
+POST /sparql
+{
+  "query": "What does ..."
+}
+```
+
 ## How It Works
 
 1. **JSON Query Handling**:
@@ -62,6 +96,30 @@ The proxy ensures that all interactions with ForestBot are handled securely and 
     - The app sends a message to the `/forestBot/proxy` endpoint.
     - The API proxies this request to ForestBot, the chatbot agent.
     - ForestBot processes the message and the response is returned to the app.
+
+4. **LLM Proxy** and **Qdrant Vector** Search
+
+   - LLM Proxy: 
+      - App sends prompt to `/forestBot/llm/proxy`. 
+      - API forwards this to the LLM (e.g., OpenAI) and returns the response.
+   - Build Qdrant Collection:
+      - App sends RDF triples to `/forestBot/llm/collection/build`.
+      - API creates and indexes the triples as vectors in Qdrant.
+   - Qdrant Semantic Search:
+      - App sends a search query to `/forestBot/llm/collection/search`.
+      - API performs semantic vector search in Qdrant and returns the closest triples.
+
+#### API Endpoints:
+
+| Endpoint                           | Method | Purpose                                          | Controller                 |
+| ---------------------------------- | ------ | ------------------------------------------------ | -------------------------- |
+| `/sparql`                          | POST   | Proxy SPARQL query to private endpoint           | `EndpointController`       |
+| `/getSparql`                       | POST   | Convert JSON query to SPARQL                     | `QueryBuilderController`   |
+| `/forestBot/proxy`                 | POST   | Proxy message to ForestBot (Rasa)                | `ForestBotProxyController` |
+| `/forestBot/llm/proxy`             | POST   | Proxy prompt to LLM (OpenAI, etc.)               | `LlmProxyController`       |
+| `/forestBot/llm/collection/build`  | POST   | Create and index RDF triple collection in Qdrant | `LlmProxyController`       |
+| `/forestBot/llm/collection/search` | POST   | Semantic search in Qdrant vector collection      | `LlmProxyController`       |
+
 
 ## Example Usage
 
@@ -121,8 +179,7 @@ The proxy ensures that all interactions with ForestBot are handled securely and 
    LLM_API_BASE_URI=https://api.openai.com
    LLM_API_KEY=my_api_key
    LLM_API_URL_SUFFIX=/v1/chat/completions
-Q  DRANT_URL=http://localhost:6333
-
+   QDRANT_URL=http://localhost:6333
    ```
 
 3. Run the API using the built-in PHP server:
