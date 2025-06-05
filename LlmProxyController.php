@@ -106,7 +106,7 @@ class LlmProxyController
      *
      * @return string The response body from the proxied request.
      */
-    public function index()
+    public function llmProxy()
     {
         // Base URI of the remote API
         $baseUri = self::$llmInfo['baseURL'];
